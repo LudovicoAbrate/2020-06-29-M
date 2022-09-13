@@ -5,8 +5,10 @@
 package it.polito.tdp.imdb;
 
 import java.net.URL;
+import java.util.LinkedList;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.imdb.model.Director;
 import it.polito.tdp.imdb.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,10 +37,10 @@ public class FXMLController {
     private Button btnCercaAffini; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxAnno"
-    private ComboBox<?> boxAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxRegista"
-    private ComboBox<?> boxRegista; // Value injected by FXMLLoader
+    private ComboBox<Director> boxRegista; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtAttoriCondivisi"
     private TextField txtAttoriCondivisi; // Value injected by FXMLLoader
@@ -48,11 +50,34 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	
+    	
+    	txtResult.clear();
+    	
+    	boxAnno.getValue();
+    	
+    	Integer anno = boxAnno.getValue();
+    	
+    	if(anno == null) {
+    		txtResult.appendText("seleziona un anno /n");
+    		return;
+    	}
+    	
+    	   this.model.creaGrafo(anno);
+    	   txtResult.appendText("grafo creato: "+"\n");
+		   txtResult.appendText("# VERTICI: "+this.model.nVertici()+"\n");
+		   txtResult.appendText("# ARCHI: "+this.model.nArchi()+"\n");
+		   
+		   boxRegista.getItems().addAll(model.getVertici(anno));
+   
     }
 
     @FXML
     void doRegistiAdiacenti(ActionEvent event) {
+    	
+    	Director tendina = this.boxRegista.getValue();
+    	
+    	txtResult.appendText("# ARCHI ADIACENTI A: "+tendina + "\n" +this.model.getAttoriAdiacenti(tendina).toString() +"\n");
 
     }
 
@@ -76,7 +101,14 @@ public class FXMLController {
    public void setModel(Model model) {
     	
     	this.model = model;
+    	this.model = model;
     	
+    	LinkedList<Integer> listaAnni = new LinkedList<Integer> ();
+    	for(int anno=2004; anno<=2006; anno++) {
+    		listaAnni.add(anno);
+    	}
+    	boxAnno.getItems().addAll(listaAnni);
     }
+    
     
 }
